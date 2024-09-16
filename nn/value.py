@@ -93,6 +93,24 @@ class BaseValue:
         out.backwards.extend([(self, 1 if self.value > 0 else 0)])
         return out
 
+    def sigmoid(self):
+        out = BaseValue(1 / (1 + math.exp(-self.value)))
+        self.out = out
+        out.backwards.extend([(self, out.value * (1 - out.value))])
+        return out
+    
+    def log(self):
+        out = BaseValue(math.log(self.value))
+        self.out = out
+        out.backwards.extend([(self, 1 / self.value)])
+        return out
+    
+    def exp(self):
+        out = BaseValue(math.exp(self.value))
+        self.out = out
+        out.backwards.extend([(self, out.value)])
+        return out
+
     def __neg__(self):  # -self
         return self * -1
 
