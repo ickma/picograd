@@ -37,7 +37,7 @@ class Layer:
         for i in range(self.out_dim):
             output = 0
             for j in range(self.in_dim):
-                output += self.weights[i * self.in_dim + j] * inputs[j]
+                output += self.weights[i * self.in_dim + j] * (inputs[j]+0)
             output = self.biases[i]+output
             outputs.append(output)
         return outputs

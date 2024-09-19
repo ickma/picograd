@@ -7,6 +7,7 @@ class BaseValue:
         self.out = None
         self.grad = 0
         self.backwards = []
+        self.backward_times = 0
 
     def __add__(self, other):  # self + other
         """
@@ -98,13 +99,13 @@ class BaseValue:
         self.out = out
         out.backwards.extend([(self, out.value * (1 - out.value))])
         return out
-    
+
     def log(self):
         out = BaseValue(math.log(self.value))
         self.out = out
         out.backwards.extend([(self, 1 / self.value)])
         return out
-    
+
     def exp(self):
         out = BaseValue(math.exp(self.value))
         self.out = out
@@ -140,7 +141,7 @@ class BaseValue:
         out.backwards.extend([(self, 1 if self.value >= 0 else -1)])
         return out
 
-    def backward(self, grad=1):
+    def backward(self):
         """
         Performs backward propagation (backpropagation) through the computational graph.
         The method does the following:
@@ -154,10 +155,12 @@ class BaseValue:
         This process effectively implements the chain rule of calculus, allowing
         gradients to flow backward through the entire computational graph.
         """
-        self.grad = grad
+
         for node, partial_derivative in self.backwards:
             node.grad += self.grad * partial_derivative
             node.backward()
+            if not isinstance(node, Parameter):
+                node.zero_grad()
 
     def zero_grad(self):
         """
